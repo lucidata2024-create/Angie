@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>GlowFit Planner | Workout & Nutrition Tracker</title>
+  <meta
+    name="description"
+    content="A premium workout and nutrition planner with workout calendar, food tracker, daily dashboard, and progress overview. Fully local and powered by localStorage."
+  />
+  <meta name="theme-color" content="#f5e8e6" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">✦</div>
+        <div class="brand-copy">
+          <p class="brand-kicker">Wellness Planner</p>
+          <h1>GlowFit</h1>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button
+          class="nav-link is-active"
+          data-section-target="dashboard-section"
+          type="button"
+          aria-current="page"
+        >
+          <span class="nav-icon" aria-hidden="true">⌂</span>
+          <span>Dashboard</span>
+        </button>
+
+        <button
+          class="nav-link"
+          data-section-target="today-section"
+          type="button"
+        >
+          <span class="nav-icon" aria-hidden="true">☀</span>
+          <span>Today</span>
+        </button>
+
+        <button
+          class="nav-link"
+          data-section-target="workout-section"
+          type="button"
+        >
+          <span class="nav-icon" aria-hidden="true">♥</span>
+          <span>Workout Calendar</span>
+        </button>
+
+        <button
+          class="nav-link"
+          data-section-target="nutrition-section"
+          type="button"
+        >
+          <span class="nav-icon" aria-hidden="true">☕</span>
+          <span>Food Tracker</span>
+        </button>
+
+        <button
+          class="nav-link"
+          data-section-target="progress-section"
+          type="button"
+        >
+          <span class="nav-icon" aria-hidden="true">↗</span>
+          <span>Progress</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-card">
+        <p class="eyebrow">Weekly rhythm</p>
+        <ul class="mini-schedule" aria-label="Workout weekly structure">
+          <li><span>Mon</span><strong>Workout</strong></li>
+          <li><span>Tue</span><strong>Workout</strong></li>
+          <li><span>Wed</span><strong>Walk</strong></li>
+          <li><span>Thu</span><strong>Workout</strong></li>
+          <li><span>Fri</span><strong>Workout</strong></li>
+          <li><span>Sat</span><strong>Walk</strong></li>
+          <li><span>Sun</span><strong>Rest</strong></li>
+        </ul>
+      </div>
+    </aside>
+
+    <div class="main-layout">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button
+            class="menu-toggle"
+            id="menuToggle"
+            type="button"
+            aria-label="Open navigation"
+            aria-controls="sidebar"
+            aria-expanded="false"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+
+          <div>
+            <p class="eyebrow">Personal fitness & nutrition space</p>
+            <h2 class="page-title" id="pageTitle">Dashboard</h2>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="topbar-date-card" aria-live="polite">
+            <span class="topbar-date-label">Today</span>
+            <strong id="currentDateLabel">Loading...</strong>
+          </div>
+        </div>
+      </header>
+
+      <main class="content" id="mainContent">
+        <!-- DASHBOARD -->
+        <section
+          class="content-section is-visible"
+          id="dashboard-section"
+          aria-labelledby="dashboardHeading"
+        >
+          <div class="hero-card soft-gradient">
+            <div class="hero-copy">
+              <p class="eyebrow">Overview</p>
+              <h2 id="dashboardHeading">Your wellness dashboard</h2>
+              <p class="hero-text">
+                A calm and elegant space to stay consistent with workouts,
+                cardio, meals, and daily progress.
+              </p>
+            </div>
+
+            <div class="hero-meta">
+              <div class="hero-stat">
+                <span class="hero-stat-label">Today's focus</span>
+                <strong id="heroTodayType">—</strong>
+              </div>
+              <div class="hero-stat">
+                <span class="hero-stat-label">Current streak</span>
+                <strong id="heroStreak">0 days</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <div class="stat-card-head">
+                <p>Today's Status</p>
+                <span class="pill" id="todayTypeBadge">—</span>
+              </div>
+              <h3 id="todayWorkoutStatus">Not completed yet</h3>
+              <p id="todayStatusDescription">
+                Your daily plan will appear here.
+              </p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-card-head">
+                <p>Workouts This Week</p>
+                <span class="icon-bubble" aria-hidden="true">✓</span>
+              </div>
+              <h3 id="weeklyWorkoutCount">0 / 4</h3>
+              <p>Completed workout days during the current week.</p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-card-head">
+                <p>Cardio Days Completed</p>
+                <span class="icon-bubble" aria-hidden="true">➜</span>
+              </div>
+              <h3 id="weeklyCardioCount">0 / 2</h3>
+              <p>Walking sessions completed this week.</p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-card-head">
+                <p>Food Logged</p>
+                <span class="icon-bubble" aria-hidden="true">✦</span>
+              </div>
+              <h3 id="foodLoggedCount">0 days</h3>
+              <p>Days with nutrition entries in the visible range.</p>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Today's plan</p>
+                  <h3>What to do today</h3>
+                </div>
+                <button
+                  type="button"
+                  class="text-button"
+                  data-section-jump="today-section"
+                >
+                  Open today
+                </button>
+              </div>
+
+              <div class="today-summary-card" id="dashboardTodaySummary">
+                <div class="empty-state compact">
+                  <h4>Preparing today's plan</h4>
+                  <p>Please wait a moment while your dashboard loads.</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Meals at a glance</p>
+                  <h3>Today's nutrition summary</h3>
+                </div>
+                <button
+                  type="button"
+                  class="text-button"
+                  data-section-jump="nutrition-section"
+                >
+                  Open food tracker
+                </button>
+              </div>
+
+              <div id="dashboardMealsSummary" class="meal-preview-list">
+                <div class="empty-state compact">
+                  <h4>No meals logged yet</h4>
+                  <p>Add breakfast, lunch, dinner, snacks, and notes anytime.</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- TODAY -->
+        <section
+          class="content-section"
+          id="today-section"
+          aria-labelledby="todayHeading"
+        >
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Today</p>
+              <h2 id="todayHeading">Today's plan</h2>
+            </div>
+            <div class="section-actions">
+              <button
+                type="button"
+                class="secondary-button"
+                id="todayResetButton"
+              >
+                Reset Status
+              </button>
+              <button
+                type="button"
+                class="primary-button"
+                id="todayCompleteButton"
+              >
+                Mark as Completed
+              </button>
+            </div>
+          </div>
+
+          <div class="today-layout">
+            <article class="panel today-main-panel">
+              <div class="day-detail-header">
+                <div>
+                  <p class="eyebrow">Day overview</p>
+                  <h3 id="todayDateHeading">Loading...</h3>
+                </div>
+                <div class="badge-row">
+                  <span class="pill" id="todayMainTypeBadge">—</span>
+                  <span class="pill subtle" id="todayMainStatusBadge">—</span>
+                </div>
+              </div>
+
+              <div id="todayPlanContent" class="day-detail-content">
+                <div class="empty-state">
+                  <h4>Loading today's plan</h4>
+                  <p>Your workout and food overview will appear here.</p>
+                </div>
+              </div>
+            </article>
+
+            <aside class="panel today-side-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Nutrition</p>
+                  <h3>Today's meal snapshot</h3>
+                </div>
+              </div>
+              <div id="todayMealsPanel" class="today-meals-panel">
+                <div class="empty-state compact">
+                  <h4>No food entries yet</h4>
+                  <p>Use the Food Tracker to add meals for today.</p>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <!-- WORKOUT -->
+        <section
+          class="content-section"
+          id="workout-section"
+          aria-labelledby="workoutHeading"
+        >
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Workout calendar</p>
+              <h2 id="workoutHeading">Your training schedule</h2>
+              <p class="section-description">
+                Generated automatically from today using your exact weekly
+                structure.
+              </p>
+            </div>
+
+            <div class="section-actions">
+              <button
+                type="button"
+                class="secondary-button"
+                id="workoutPrevMonth"
+                aria-label="Previous month"
+              >
+                ←
+              </button>
+              <div class="month-label" id="workoutMonthLabel">Month</div>
+              <button
+                type="button"
+                class="secondary-button"
+                id="workoutNextMonth"
+                aria-label="Next month"
+              >
+                →
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-legend" aria-label="Calendar legend">
+            <div class="legend-item">
+              <span class="legend-dot workout"></span>
+              <span>Workout</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot cardio"></span>
+              <span>Cardio / Walk</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot rest"></span>
+              <span>Rest</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot complete"></span>
+              <span>Completed</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot today"></span>
+              <span>Today</span>
+            </div>
+          </div>
+
+          <article class="panel calendar-panel">
+            <div class="calendar-weekdays" aria-hidden="true">
+              <span>Mon</span>
+              <span>Tue</span>
+              <span>Wed</span>
+              <span>Thu</span>
+              <span>Fri</span>
+              <span>Sat</span>
+              <span>Sun</span>
+            </div>
+
+            <div
+              class="calendar-grid"
+              id="workoutCalendarGrid"
+              aria-label="Workout calendar"
+            ></div>
+          </article>
+
+          <article class="panel day-details-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Selected day</p>
+                <h3 id="selectedDayHeading">Choose a day</h3>
+              </div>
+              <div class="badge-row">
+                <span class="pill" id="selectedDayTypeBadge">—</span>
+                <span class="pill subtle" id="selectedDayStatusBadge">—</span>
+              </div>
+            </div>
+
+            <div id="selectedDayDetails" class="selected-day-details">
+              <div class="empty-state">
+                <h4>No day selected yet</h4>
+                <p>
+                  Click any day in the calendar to view its full workout or
+                  recovery plan.
+                </p>
+              </div>
+            </div>
+
+            <div class="detail-actions">
+              <button
+                type="button"
+                class="secondary-button"
+                id="resetSelectedDayButton"
+                disabled
+              >
+                Reset Status
+              </button>
+              <button
+                type="button"
+                class="primary-button"
+                id="completeSelectedDayButton"
+                disabled
+              >
+                Mark as Completed
+              </button>
+            </div>
+          </article>
+        </section>
+
+        <!-- NUTRITION -->
+        <section
+          class="content-section"
+          id="nutrition-section"
+          aria-labelledby="nutritionHeading"
+        >
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Nutrition tracker</p>
+              <h2 id="nutritionHeading">Food journal</h2>
+              <p class="section-description">
+                Log meals by day, keep notes, hydration, and build consistency.
+              </p>
+            </div>
+          </div>
+
+          <div class="nutrition-layout">
+            <article class="panel nutrition-calendar-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Choose a date</p>
+                  <h3>Meal calendar</h3>
+                </div>
+              </div>
+
+              <div class="food-date-toolbar">
+                <button
+                  type="button"
+                  class="secondary-button"
+                  id="foodPrevRangeButton"
+                >
+                  Earlier
+                </button>
+                <p id="foodRangeLabel">Upcoming days</p>
+                <button
+                  type="button"
+                  class="secondary-button"
+                  id="foodNextRangeButton"
+                >
+                  Later
+                </button>
+              </div>
+
+              <div
+                class="food-day-list"
+                id="foodDayList"
+                aria-label="Food tracker day selector"
+              ></div>
+            </article>
+
+            <article class="panel nutrition-form-panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Selected date</p>
+                  <h3 id="foodSelectedDateLabel">Select a day to log meals</h3>
+                </div>
+                <span class="pill subtle" id="foodSelectedDayType">—</span>
+              </div>
+
+              <form id="mealForm" class="meal-form" novalidate>
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="mealType">Meal Category</label>
+                    <select id="mealType" name="mealType" required>
+                      <option value="Breakfast">Breakfast</option>
+                      <option value="Lunch">Lunch</option>
+                      <option value="Dinner">Dinner</option>
+                      <option value="Snacks">Snacks</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="waterIntake">Hydration (glasses)</label>
+                    <input
+                      type="number"
+                      id="waterIntake"
+                      name="waterIntake"
+                      min="0"
+                      max="30"
+                      step="1"
+                      placeholder="e.g. 8"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="mealText">What did you eat?</label>
+                  <textarea
+                    id="mealText"
+                    name="mealText"
+                    rows="4"
+                    placeholder="Write your meal here..."
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="mealNotes">Notes</label>
+                  <textarea
+                    id="mealNotes"
+                    name="mealNotes"
+                    rows="3"
+                    placeholder="Optional notes, mood, hunger cues, preparation details..."
+                  ></textarea>
+                </div>
+
+                <div class="form-check-row">
+                  <label class="custom-check" for="healthyDay">
+                    <input type="checkbox" id="healthyDay" name="healthyDay" />
+                    <span>Mark as a healthy day</span>
+                  </label>
+                </div>
+
+                <div class="form-actions">
+                  <button
+                    type="button"
+                    class="secondary-button"
+                    id="clearMealFormButton"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="submit"
+                    class="primary-button"
+                    id="saveMealButton"
+                  >
+                    Save Entry
+                  </button>
+                </div>
+
+                <input type="hidden" id="editingMealId" value="" />
+              </form>
+            </article>
+          </div>
+
+          <article class="panel nutrition-entries-panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Entries</p>
+                <h3>Meals for selected day</h3>
+              </div>
+            </div>
+
+            <div id="mealEntriesList" class="meal-entries-list">
+              <div class="empty-state">
+                <h4>No meals logged for this day</h4>
+                <p>
+                  Add breakfast, lunch, dinner, snacks, hydration, and notes to
+                  build a clear nutrition history.
+                </p>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <!-- PROGRESS -->
+        <section
+          class="content-section"
+          id="progress-section"
+          aria-labelledby="progressHeading"
+        >
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Progress</p>
+              <h2 id="progressHeading">Consistency overview</h2>
+              <p class="section-description">
+                A clean weekly summary of movement, recovery, and food logging.
+              </p>
+            </div>
+          </div>
+
+          <div class="progress-grid">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Weekly summary</p>
+                  <h3>This week</h3>
+                </div>
+              </div>
+
+              <div class="metric-stack">
+                <div class="metric-row">
+                  <div>
+                    <strong>Workout completion</strong>
+                    <p>Completed strength-focused workout days</p>
+                  </div>
+                  <span id="progressWorkoutMetric">0 / 4</span>
+                </div>
+
+                <div class="metric-row">
+                  <div>
+                    <strong>Cardio consistency</strong>
+                    <p>Walking sessions completed this week</p>
+                  </div>
+                  <span id="progressCardioMetric">0 / 2</span>
+                </div>
+
+                <div class="metric-row">
+                  <div>
+                    <strong>Nutrition logging</strong>
+                    <p>Days with at least one food entry this week</p>
+                  </div>
+                  <span id="progressFoodMetric">0 / 7</span>
+                </div>
+
+                <div class="metric-row">
+                  <div>
+                    <strong>Recovery rhythm</strong>
+                    <p>Scheduled rest day in your plan</p>
+                  </div>
+                  <span id="progressRestMetric">1 day</span>
+                </div>
+              </div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="eyebrow">Consistency streak</p>
+                  <h3>Momentum</h3>
+                </div>
+              </div>
+
+              <div class="streak-card">
+                <div class="streak-number" id="progressStreakNumber">0</div>
+                <p class="streak-label">days in a row with completed planned activity</p>
+              </div>
+
+              <div class="progress-note" id="progressMotivationMessage">
+                Your consistency message will appear here.
+              </div>
+            </article>
+          </div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Upcoming rhythm</p>
+                <h3>Next 7 days</h3>
+              </div>
+            </div>
+
+            <div id="upcomingWeekPreview" class="upcoming-week-preview">
+              <div class="empty-state compact">
+                <h4>Loading preview</h4>
+                <p>Your next seven days will appear here shortly.</p>
+              </div>
+            </div>
+          </article>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- DAY DETAILS MODAL -->
+  <div
+    class="modal"
+    id="dayModal"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="dayModalTitle"
+  >
+    <div class="modal-backdrop" data-close-modal="true"></div>
+
+    <div class="modal-dialog" role="document">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">Day details</p>
+          <h3 id="dayModalTitle">Selected day</h3>
+        </div>
+        <button
+          type="button"
+          class="icon-button"
+          id="closeDayModalButton"
+          aria-label="Close day details"
+        >
+          ✕
+        </button>
+      </div>
+
+      <div class="modal-body" id="dayModalBody">
+        <div class="empty-state compact">
+          <h4>No content yet</h4>
+          <p>Select a day from the calendar to view the full plan.</p>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="secondary-button"
+          id="modalResetDayButton"
+        >
+          Reset Status
+        </button>
+        <button
+          type="button"
+          class="primary-button"
+          id="modalCompleteDayButton"
+        >
+          Mark as Completed
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div
+    class="toast-container"
+    id="toastContainer"
+    aria-live="polite"
+    aria-atomic="true"
+  ></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
